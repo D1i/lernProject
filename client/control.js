@@ -7,7 +7,7 @@ const left = keyboard('ArrowLeft'),
 left.press = () => {
   choisenPlayer.xSpeed = -5;
 };
-
+ 
 left.release = () => {
   if (right.isUp) {
     choisenPlayer.xSpeed = 0;
