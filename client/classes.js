@@ -68,6 +68,7 @@ class Cat extends Player {
         this.height
       );
     } else {
+      pop.play();
       ctx.drawImage(
         this.sprite,
         0,
