@@ -1,4 +1,5 @@
 function keyboard(value) {
+  
   //Создание объекта для регестрирования событий клавиатуры
   let key = {};
   key.value = value;
