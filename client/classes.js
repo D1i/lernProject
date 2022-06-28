@@ -14,6 +14,7 @@ class GameMap extends Package {
     gameObj.x = x;
     gameObj.y = y;
     gameObj.locate = this.id;
+    gameObj.id = this.countId;
     const gameObjDescription = {
       gameObj: gameObj,
       x: x,
@@ -23,11 +24,28 @@ class GameMap extends Package {
     this.GameObjects.push(gameObjDescription);
     this.countId++;
   }
+
+  distanceFromPlayer(choisenPlayer) {
+    return this.GameObjects.map((e) => {
+      const obj = e.gameObj;
+
+      if (obj !== choisenPlayer) {
+        const distanse = {
+          obj: obj,
+          distanceX: choisenPlayer.x - obj.x,
+          distanceY: choisenPlayer.y - obj.y,
+        };
+        return distanse;
+      }
+      return null;
+    });
+  }
 }
 
 class Inventory extends Package {
   constructor(GameObjects) {
     super(GameObjects);
+    this.id = null;
   }
 }
 
@@ -39,6 +57,7 @@ class GameObject {
     this.x = 0;
     this.y = 0;
     this.locate = null;
+    this.id = null;
   }
 
   render(
@@ -67,9 +86,24 @@ class Item extends GameObject {
   pickuped(playerId) {
     this.locate = playerId;
   }
-
   droped() {
     this.locate = 'map';
+  }
+  itemRender(
+    canvasWidth,
+    canvasHeight,
+    playerX,
+    playerY,
+    playerWidth,
+    playerHeight
+  ) {
+    ctx.drawImage(
+      this.sprite,
+      -playerWidth + canvasWidth + playerWidth * 2,
+      -playerHeight + canvasHeight,
+      this.width,
+      this.height
+    );
   }
 }
 
@@ -82,8 +116,27 @@ class Player extends GameObject {
     this.inventory = [];
   }
 
-  pickup(itemId) {
-    this.inventory.push(itemId);
+  setInventoty(inventory) {
+    inventory.id = this.id;
+    this.inventory = inventory;
+  }
+
+  pickup(map) {
+    const distanse = map.distanceFromPlayer(this);
+    console.log(distanse);
+    distanse.forEach((e) => {
+      if (e === null) return;
+      if (e.obj.pickuped) {
+        console.log('lol');
+        if (e.distanceX <= 100 && e.distanceY <= 100) {
+          console.log('lol, lol');
+          map.GameObjects.splice(map.GameObjects.indexOf(e.obj), 1);
+          this.inventory.GameObjects.push(e.obj);
+          e.obj.pickuped(this.id);
+          return;
+        }
+      }
+    });
   }
 
   drop(itemId) {
