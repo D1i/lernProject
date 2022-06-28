@@ -1,10 +1,18 @@
-class Object {
-  constructor(positionX, positionY, width, height, sprite) {
+class Map {
+  contructor(id, GameObjects) {
+    this.id = id;
+    this.GameObjects = this.GameObjects;
+  }
+}
+
+class GameObject {
+  constructor(positionX, positionY, width, height, sprite, id) {
     this.positionX = positionX;
     this.positionY = positionY;
     this.width = width;
     this.height = height;
     this.sprite = sprite;
+    this.id = id;
   }
 
   render() {
@@ -18,15 +26,36 @@ class Object {
   }
 }
 
-class Player extends Object {
-  constructor(positionX, positionY, width, height, sprite) {
-    super(positionX, positionY, width, height, sprite);
+class Item extends GameObject {
+  constructor(positionX, positionY, width, height, sprite, id) {
+    super(positionX, positionY, width, height, sprite, id);
+    this.locate = 'map';
+  }
+  pickuped(playerId) {
+    this.locate = playerId;
+  }
+
+  droped() {
+    this.locate = 'map';
+  }
+}
+
+class Player extends GameObject {
+  constructor(positionX, positionY, width, height, sprite, id) {
+    super(positionX, positionY, width, height, sprite, id);
     this.xSpeed = 0;
     this.ySpeed = 0;
     this.dropZone = 64;
+    this.inventory = [];
   }
 
-  pickUp() {}
+  pickup(itemId) {
+    this.inventory.push(itemId);
+  }
+
+  drop(itemId) {
+    this.inventory.splice(this.inventory.indexOf(itemId), 1);
+  }
 
   moveX() {
     this.positionX += this.xSpeed;
@@ -49,8 +78,8 @@ class Player extends Object {
 }
 
 class Cat extends Player {
-  constructor(positionX, positionY, width, height, sprite) {
-    super(positionX, positionY, width, height, sprite);
+  constructor(positionX, positionY, width, height, sprite, id) {
+    super(positionX, positionY, width, height, sprite, id);
     this.count = 0;
   }
 
