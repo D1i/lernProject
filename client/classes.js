@@ -1,25 +1,58 @@
-class Map {
-  contructor(id, GameObjects) {
+class Package {
+  constructor(id) {
+    this.GameObjects = [];
+    this.countId = 0;
     this.id = id;
-    this.GameObjects = this.GameObjects;
+  }
+}
+
+class GameMap extends Package {
+  constructor(GameObjects, id) {
+    super(GameObjects, id);
+  }
+  addIn(gameObj, x, y) {
+    gameObj.x = x;
+    gameObj.y = y;
+    gameObj.locate = this.id;
+    const gameObjDescription = {
+      gameObj: gameObj,
+      x: x,
+      y: y,
+      id: this.countId,
+    };
+    this.GameObjects.push(gameObjDescription);
+    this.countId++;
+  }
+}
+
+class Inventory extends Package {
+  constructor(GameObjects) {
+    super(GameObjects);
   }
 }
 
 class GameObject {
-  constructor(positionX, positionY, width, height, sprite, id) {
-    this.positionX = positionX;
-    this.positionY = positionY;
+  constructor(width, height, sprite) {
     this.width = width;
     this.height = height;
     this.sprite = sprite;
-    this.id = id;
+    this.x = 0;
+    this.y = 0;
+    this.locate = null;
   }
 
-  render() {
+  render(
+    canvasWidth,
+    canvasHeight,
+    playerX,
+    playerY,
+    playerWidth,
+    playerHeight
+  ) {
     ctx.drawImage(
       this.sprite,
-      this.positionX,
-      this.positionY,
+      this.x - playerX - playerWidth + canvasWidth,
+      this.y - playerY - playerHeight + canvasHeight,
       this.width,
       this.height
     );
@@ -27,8 +60,8 @@ class GameObject {
 }
 
 class Item extends GameObject {
-  constructor(positionX, positionY, width, height, sprite, id) {
-    super(positionX, positionY, width, height, sprite, id);
+  constructor(width, height, sprite, id) {
+    super(width, height, sprite, id);
     this.locate = 'map';
   }
   pickuped(playerId) {
@@ -41,8 +74,8 @@ class Item extends GameObject {
 }
 
 class Player extends GameObject {
-  constructor(positionX, positionY, width, height, sprite, id) {
-    super(positionX, positionY, width, height, sprite, id);
+  constructor(width, height, sprite, id) {
+    super(width, height, sprite, id);
     this.xSpeed = 0;
     this.ySpeed = 0;
     this.dropZone = 64;
@@ -58,11 +91,11 @@ class Player extends GameObject {
   }
 
   moveX() {
-    this.positionX += this.xSpeed;
+    this.x += this.xSpeed;
   }
 
   moveY() {
-    this.positionY += this.ySpeed;
+    this.y += this.ySpeed;
   }
 
   focus() {
@@ -82,33 +115,58 @@ class Cat extends Player {
     super(positionX, positionY, width, height, sprite, id);
     this.count = 0;
   }
+  render(
+    canvasWidth,
+    canvasHeight,
+    playerX,
+    playerY,
+    playerWidth,
+    playerHeight
+  ) {
+    ctx.drawImage(
+      this.sprite,
+      this.x - playerX - playerWidth + canvasWidth,
+      this.y - playerY - playerHeight + canvasHeight,
+      this.width,
+      this.height
+    );
+  }
 
-  animateRender() {
-    if (this.count < 10) {
+  render(
+    canvasWidth,
+    canvasHeight,
+    playerX,
+    playerY,
+    playerWidth,
+    playerHeight
+  ) {
+    if (this.count < 50) {
       ctx.drawImage(
         this.sprite,
         0,
         0,
         490,
         540,
-        this.positionX,
-        this.positionY,
+        this.x - playerX - playerWidth + canvasWidth,
+        this.y - playerY - playerHeight + canvasHeight,
         this.width,
         this.height
       );
     } else {
-      pop.play();
+      if (this.count === 50) pop.play();
       ctx.drawImage(
         this.sprite,
         0,
         540,
         490,
         616,
-        this.positionX,
-        this.positionY,
+        this.x - playerX - playerWidth + canvasWidth,
+        this.y - playerY - playerHeight + canvasHeight,
         this.width,
         this.height
       );
     }
+    this.count++;
+    if (this.count === 100 || !(this.xSpeed || this.ySpeed)) this.count = 0;
   }
 }
