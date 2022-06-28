@@ -97,39 +97,12 @@ class Player extends GameObject {
   moveY() {
     this.y += this.ySpeed;
   }
-
-  focus() {
-    ctx.restore();
-    ctx.save();
-    const canvasHeight = window.innerHeight * 0.8;
-    const canvasWidth = window.innerWidth * 0.8;
-    ctx.translate(
-      -this.positionX + canvasWidth / 2 - this.width / 2,
-      -this.positionY + canvasHeight / 2 - this.height / 2
-    );
-  }
 }
 
 class Cat extends Player {
   constructor(positionX, positionY, width, height, sprite, id) {
     super(positionX, positionY, width, height, sprite, id);
     this.count = 0;
-  }
-  render(
-    canvasWidth,
-    canvasHeight,
-    playerX,
-    playerY,
-    playerWidth,
-    playerHeight
-  ) {
-    ctx.drawImage(
-      this.sprite,
-      this.x - playerX - playerWidth + canvasWidth,
-      this.y - playerY - playerHeight + canvasHeight,
-      this.width,
-      this.height
-    );
   }
 
   render(
