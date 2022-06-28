@@ -15,10 +15,18 @@ const loadingAudio = () => {
 
 const newPlayer = new Cat(64, 64, plImg);
 const newObject = new GameObject(64, 64, wingImg);
+const wateringCan = new Item(64, 64, wateringCanImg);
+const inventory = new Inventory();
+newPlayer.setInventoty(inventory);
 let choisenPlayer = newPlayer;
 const newMap = new GameMap();
+const maps = [newMap];
+maps.forEach((e, i) => {
+  e.id = i;
+});
 newMap.addIn(newObject, 64, 64);
 newMap.addIn(newPlayer, 0, 0);
+newMap.addIn(wateringCan, -64, -64);
 const timer = setInterval(loadingAudio, 100);
 
 const gameStart = () => {
@@ -55,5 +63,15 @@ const renderMap = (map, choisenPlayer) => {
       gameObj.moveY();
       e.y = gameObj.y;
     }
+  });
+  choisenPlayer.inventory.GameObjects.forEach((e) => {
+    e.itemRender(
+      canvasWidth,
+      canvasHeight,
+      playerX,
+      playerY,
+      playerWidth,
+      playerHeight
+    );
   });
 };

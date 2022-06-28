@@ -7,7 +7,7 @@ const left = keyboard('ArrowLeft'),
 left.press = () => {
   choisenPlayer.xSpeed = -5;
 };
- 
+
 left.release = () => {
   if (right.isUp) {
     choisenPlayer.xSpeed = 0;
@@ -53,13 +53,5 @@ down.release = () => {
 };
 
 space.press = () => {
-  if (choisenPlayer === newPlayer) {
-    choisenPlayer = newPlayer2;
-    newPlayer.xSpeed = 0;
-    newPlayer.ySpeed = 0;
-  } else {
-    choisenPlayer = newPlayer;
-    newPlayer2.xSpeed = 0;
-    newPlayer2.ySpeed = 0;
-  }
+  choisenPlayer.pickup(maps[0]);
 };
