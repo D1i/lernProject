@@ -11,24 +11,34 @@ class GameMap extends Package {
     super(GameObjects, id);
   }
   addIn(gameObj, x, y) {
-    gameObj.x = x;
-    gameObj.y = y;
-    gameObj.locate = this.id;
-    gameObj.id = this.countId;
-    const gameObjDescription = {
-      gameObj: gameObj,
-      x: x,
-      y: y,
-      id: this.countId,
-    };
-    this.GameObjects.push(gameObjDescription);
-    this.countId++;
+    for (let i = 0; ; i++) {
+      console.log('сработало');
+      if (!this.GameObjects[i]) {
+        // console.log('сработало');
+        gameObj.x = x;
+        gameObj.y = y;
+        gameObj.locate = this.id;
+        gameObj.id = i;
+        const gameObjDescription = {
+          gameObj: gameObj,
+          x: x,
+          y: y,
+          id: i,
+        };
+        this.GameObjects[i] = gameObjDescription;
+        return;
+      }
+    }
+  }
+
+  removeIn(gameObj) {
+    this.GameObjects[gameObj.id] = null;
   }
 
   distanceFromPlayer(choisenPlayer) {
     return this.GameObjects.map((e) => {
+      if (!e) return;
       const obj = e.gameObj;
-
       if (obj !== choisenPlayer) {
         const distanse = {
           obj: obj,
@@ -42,10 +52,40 @@ class GameMap extends Package {
   }
 }
 
-class Inventory extends Package {
-  constructor(GameObjects) {
-    super(GameObjects);
+class PlayerInventory extends Package {
+  constructor() {
+    super();
     this.id = null;
+    this.choisenItem = 0;
+    this.GameObjects = [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+    ];
+  }
+
+  addItem(item) {
+    if (this.GameObjects[this.choisenItem]) return null;
+    this.GameObjects[this.choisenItem] = item;
+    return true;
+    // const adding = this.GameObjects.some((e, i, arr) => {
+    //   if (!e) {
+    //     arr[i] = item;
+    //     return true;
+    //   }
+    // });
+    // return null;
+  }
+
+  removeItem(item) {
+    this.GameObjects[this.GameObjects.indexOf(item)] = null;
   }
 }
 
@@ -86,8 +126,8 @@ class Item extends GameObject {
   pickuped(playerId) {
     this.locate = playerId;
   }
-  droped() {
-    this.locate = 'map';
+  droped(mapId) {
+    this.locate = mapId;
   }
   itemRender(
     canvasWidth,
@@ -123,24 +163,27 @@ class Player extends GameObject {
 
   pickup(map) {
     const distanse = map.distanceFromPlayer(this);
-    console.log(distanse);
     distanse.forEach((e) => {
-      if (e === null) return;
+      if (!e) return;
       if (e.obj.pickuped) {
-        console.log('lol');
-        if (e.distanceX <= 100 && e.distanceY <= 100) {
-          console.log('lol, lol');
-          map.GameObjects.splice(map.GameObjects.indexOf(e.obj), 1);
-          this.inventory.GameObjects.push(e.obj);
-          e.obj.pickuped(this.id);
-          return;
+        if (Math.abs(e.distanceX) <= 100 && Math.abs(e.distanceY) <= 100) {
+          const adding = this.inventory.addItem(e.obj);
+          if (adding) {
+            map.removeIn(e.obj);
+            e.obj.pickuped(this.id);
+          }
         }
       }
     });
   }
 
-  drop(itemId) {
-    this.inventory.splice(this.inventory.indexOf(itemId), 1);
+  drop(item, map) {
+    if (!item) return;
+    this.inventory.removeItem(item);
+    console.log(item);
+    map.addIn(item, choisenPlayer.x, choisenPlayer.y);
+    console.log(map);
+    item.droped(map.id);
   }
 
   moveX() {
