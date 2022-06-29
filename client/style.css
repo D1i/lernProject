@@ -55,6 +55,11 @@ body {
   border: solid 3px rgb(141, 78, 27);
 }
 
+#grid-1 {
+  background-color: rgb(181, 233, 121);
+  border: solid 3px green;
+}
+
 .inventory-grid-img {
   display: flex;
   align-items: center;

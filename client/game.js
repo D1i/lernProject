@@ -13,8 +13,6 @@ const loadingAudio = () => {
   }
 };
 
-const domInventory = document.querySelector('.inventory');
-
 const newPlayer = new Cat(64, 64, plImg);
 const newObject = new GameObject(64, 64, wingImg);
 const wateringCan = new Item(64, 64, wateringCanImg);
@@ -36,18 +34,30 @@ newMap.addIn(wateringCan3, -64, 56);
 const timer = setInterval(loadingAudio, 100);
 
 const gameStart = () => {
-  setInterval(() => {
+  requestAnimationFrame(() => {
     renderMap(newMap, choisenPlayer);
-  }, 10);
+  });
+  setInterval(() => {
+    calculate(newMap);
+  }, 20);
 };
 
 const clearMap = (canvasWidth, canvasHeight) => {
   ctx.clearRect(0, 0, canvasWidth * 2, canvasHeight * 2);
 };
 
-// const renderInventory = () => {
-//   choisenPlayer.
-// }
+const calculate = (map) => {
+  map.GameObjects.forEach((e) => {
+    if (!e) return;
+    const gameObj = e.gameObj;
+    if (gameObj.moveX) {
+      gameObj.moveX();
+      e.x = gameObj.x;
+      gameObj.moveY();
+      e.y = gameObj.y;
+    }
+  });
+};
 
 const renderMap = (map, choisenPlayer) => {
   const canvasHeight = (window.innerHeight * 0.8) / 2;
@@ -56,6 +66,7 @@ const renderMap = (map, choisenPlayer) => {
   const playerY = choisenPlayer.y;
   const playerWidth = choisenPlayer.width / 2;
   const playerHeight = choisenPlayer.height / 2;
+
   clearMap(canvasWidth, canvasHeight);
   map.GameObjects.forEach((e) => {
     if (!e) return;
@@ -68,21 +79,11 @@ const renderMap = (map, choisenPlayer) => {
       playerWidth,
       playerHeight
     );
-    if (gameObj.moveX) {
-      gameObj.moveX();
-      e.x = gameObj.x;
-      gameObj.moveY();
-      e.y = gameObj.y;
-    }
   });
 
   const choisenItem = choisenPlayer.inventory.choisenItem;
-  const elemStyle = domInventory.children[choisenItem].style;
-
   choisenPlayer.inventory.GameObjects.forEach((e, i) => {
     const gridInventory = domInventory.children[i];
-    gridInventory.style.backgroundColor = 'rgb(214, 151, 99)';
-    gridInventory.style.border = 'solid 3px rgb(141, 78, 27)';
     if (!e) {
       gridInventory.firstElementChild.setAttribute('src', './img/void.png');
       return;
@@ -91,16 +92,10 @@ const renderMap = (map, choisenPlayer) => {
     }
 
     if (choisenItem === i) {
-      e.itemRender(
-        canvasWidth,
-        canvasHeight,
-        playerX,
-        playerY,
-        playerWidth,
-        playerHeight
-      );
+      e.itemRender(canvasWidth, canvasHeight, playerWidth, playerHeight);
     }
   });
-  elemStyle.backgroundColor = 'rgb(181, 233, 121)';
-  elemStyle.border = 'solid 3px green';
+  requestAnimationFrame(() => {
+    renderMap(newMap, choisenPlayer);
+  });
 };
