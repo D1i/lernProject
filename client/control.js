@@ -17,100 +17,120 @@ const left = keyboard('ArrowLeft'),
   e = keyboard('e');
 
 left.press = () => {
-  choisenPlayer.xSpeed = -5;
+  choisenPlayer.xSpeed = -10;
 };
 
 left.release = () => {
   if (right.isUp) {
     choisenPlayer.xSpeed = 0;
   } else {
-    choisenPlayer.xSpeed = 5;
+    choisenPlayer.xSpeed = 10;
   }
 };
 
 right.press = () => {
-  choisenPlayer.xSpeed = 5;
+  choisenPlayer.xSpeed = 10;
 };
 
 right.release = () => {
   if (left.isUp) {
     choisenPlayer.xSpeed = 0;
   } else {
-    choisenPlayer.xSpeed = -5;
+    choisenPlayer.xSpeed = -10;
   }
 };
 
 up.press = () => {
-  choisenPlayer.ySpeed = -5;
+  choisenPlayer.ySpeed = -10;
 };
 
 up.release = () => {
   if (down.isUp) {
     choisenPlayer.ySpeed = 0;
   } else {
-    choisenPlayer.ySpeed = 5;
+    choisenPlayer.ySpeed = 10;
   }
 };
 
 down.press = () => {
-  choisenPlayer.ySpeed = 5;
+  choisenPlayer.ySpeed = 10;
 };
 
 down.release = () => {
   if (up.isUp) {
     choisenPlayer.ySpeed = 0;
   } else {
-    choisenPlayer.ySpeed = -5;
+    choisenPlayer.ySpeed = -10;
   }
 };
 
 e.press = () => {
+  console.log('Нажате e');
+  choisenPlayer.pickup(maps[0]);
+};
+space.press = () => {
+  console.log('Нажате e');
   choisenPlayer.pickup(maps[0]);
 };
 
+const updateInvetory = (num) => {
+  choisenPlayer.inventory.choisenItem = num;
+  const choisenItem = choisenPlayer.inventory.choisenItem;
+  Array.from(domInventory.children).forEach((e, i) => {
+    const gridInventory = domInventory.children[i].style;
+    if (i === choisenItem) {
+      gridInventory.backgroundColor = 'rgb(181, 233, 121)';
+      gridInventory.border = 'solid 3px green';
+    } else {
+      gridInventory.backgroundColor = 'rgb(214, 151, 99)';
+      gridInventory.border = 'solid 3px rgb(141, 78, 27)';
+    }
+  });
+};
+
 one.press = () => {
-  choisenPlayer.inventory.choisenItem = 0;
+  updateInvetory(0);
 };
 
 two.press = () => {
-  choisenPlayer.inventory.choisenItem = 1;
+  updateInvetory(1);
 };
 
 third.press = () => {
-  choisenPlayer.inventory.choisenItem = 2;
+  updateInvetory(2);
 };
 
 four.press = () => {
-  choisenPlayer.inventory.choisenItem = 3;
+  updateInvetory(3);
 };
 
 five.press = () => {
-  choisenPlayer.inventory.choisenItem = 4;
+  updateInvetory(4);
 };
 
 six.press = () => {
-  choisenPlayer.inventory.choisenItem = 5;
+  updateInvetory(5);
 };
 
 seven.press = () => {
-  choisenPlayer.inventory.choisenItem = 6;
+  updateInvetory(6);
 };
 
 eight.press = () => {
-  choisenPlayer.inventory.choisenItem = 7;
+  updateInvetory(7);
 };
 
 nine.press = () => {
-  choisenPlayer.inventory.choisenItem = 8;
+  updateInvetory(8);
 };
 
 zero.press = () => {
-  choisenPlayer.inventory.choisenItem = 9;
+  updateInvetory(9);
 };
 
 g.press = () => {
+  console.log('Нажате g');
   const item =
     choisenPlayer.inventory.GameObjects[choisenPlayer.inventory.choisenItem];
-  console.log(item);
   choisenPlayer.drop(item, maps[0]);
 };

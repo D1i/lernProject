@@ -14,7 +14,6 @@ class GameMap extends Package {
     for (let i = 0; ; i++) {
       console.log('сработало');
       if (!this.GameObjects[i]) {
-        // console.log('сработало');
         gameObj.x = x;
         gameObj.y = y;
         gameObj.locate = this.id;
@@ -72,20 +71,17 @@ class PlayerInventory extends Package {
   }
 
   addItem(item) {
-    if (this.GameObjects[this.choisenItem]) return null;
-    this.GameObjects[this.choisenItem] = item;
+    const GameObjects = this.GameObjects;
+    const choisenItem = this.choisenItem;
+    if (GameObjects[choisenItem]) return null;
+    GameObjects[choisenItem] = item;
+    item.locate = this.id;
     return true;
-    // const adding = this.GameObjects.some((e, i, arr) => {
-    //   if (!e) {
-    //     arr[i] = item;
-    //     return true;
-    //   }
-    // });
-    // return null;
   }
 
   removeItem(item) {
-    this.GameObjects[this.GameObjects.indexOf(item)] = null;
+    const GameObjects = this.GameObjects;
+    GameObjects[GameObjects.indexOf(item)] = null;
   }
 }
 
@@ -121,22 +117,8 @@ class GameObject {
 class Item extends GameObject {
   constructor(width, height, sprite, id) {
     super(width, height, sprite, id);
-    this.locate = 'map';
   }
-  pickuped(playerId) {
-    this.locate = playerId;
-  }
-  droped(mapId) {
-    this.locate = mapId;
-  }
-  itemRender(
-    canvasWidth,
-    canvasHeight,
-    playerX,
-    playerY,
-    playerWidth,
-    playerHeight
-  ) {
+  itemRender(canvasWidth, canvasHeight, playerWidth, playerHeight) {
     ctx.drawImage(
       this.sprite,
       -playerWidth + canvasWidth + playerWidth * 2,
@@ -165,12 +147,11 @@ class Player extends GameObject {
     const distanse = map.distanceFromPlayer(this);
     distanse.forEach((e) => {
       if (!e) return;
-      if (e.obj.pickuped) {
+      if (e.obj instanceof Item) {
         if (Math.abs(e.distanceX) <= 100 && Math.abs(e.distanceY) <= 100) {
           const adding = this.inventory.addItem(e.obj);
           if (adding) {
             map.removeIn(e.obj);
-            e.obj.pickuped(this.id);
           }
         }
       }
@@ -180,10 +161,7 @@ class Player extends GameObject {
   drop(item, map) {
     if (!item) return;
     this.inventory.removeItem(item);
-    console.log(item);
-    map.addIn(item, choisenPlayer.x, choisenPlayer.y);
-    console.log(map);
-    item.droped(map.id);
+    map.addIn(item, choisenPlayer.x + choisenPlayer.width, choisenPlayer.y);
   }
 
   moveX() {
